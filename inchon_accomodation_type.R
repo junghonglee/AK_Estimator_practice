@@ -49,4 +49,4 @@ for (i in 1:2099){
 
 place_total <- place + place2 # 1: 중저가, 2:특2급 이상, 3: 둘다 
 
-
+accomodation_count <- table(place_total)
