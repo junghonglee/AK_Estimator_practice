@@ -396,15 +396,16 @@ cat("simulation =", simul," ");cat("bootstrap =", boot_simul," "); cat("Time =",
 head(result)
 
 #Variance differnce test
-var_diff <- matrix(0,1,7)
-var_diff[1,1] <- mean(sqrt(all_variance)) / mean(sqrt(boo_var1[17]))
-var_diff[1,2] <- mean(sqrt(all_variance2)) / mean(sqrt(boo_var2[18]))
-var_diff[1,3] <- mean(sqrt(all_variance3)) / mean(sqrt(boo_var3))
+var_diff <- matrix(0,1,8)
+var_diff[1,1] <- mean(sqrt(boo_var1)) / mean(sqrt(boo_var2))
+var_diff[1,2] <- mean(sqrt(boo_var1)) / mean(sqrt(boo_var3))
+var_diff[1,3] <- mean(sqrt(boo_var2)) / mean(sqrt(boo_var3))
 var_diff[1,4] <- mean(sqrt(simple_var1)) / mean(sqrt(boo_var1))
 var_diff[1,5] <- mean(sqrt(simple_var2)) / mean(sqrt(boo_var2))
 var_diff[1,6] <- mean(sqrt(simple_var3)) / mean(sqrt(boo_var3))
 var_diff[1,7] <- mean(sqrt(global_var)) / mean(sqrt(boo_var3))
-colnames(var_diff) <- (c("ak2/ak3","ak2/ak4","ak3/ak4","simple/ak2", "simple/ak3","simple/ak4", "Global/Local"))
+var_diff[1,8] <- mean(sqrt(simple_var3)) / mean(sqrt(global_var))
+colnames(var_diff) <- (c("ak2/ak3","ak2/ak4","ak3/ak4","simple/ak2", "simple/ak3","simple/Local", "Global/Local", "simple/Global"))
 
 #mean difference test
 mean_diff <- colMeans(result)
@@ -418,6 +419,9 @@ boot_result[1] <- mean(sqrt(boo_var3)) / sd(boo_mean3)
 boot_result[2] <- mean(sqrt(boo_var2)) / sd(boo_mean2)
 boot_result[3] <- mean(sqrt(boo_var1)) / sd(boo_mean1)
 
+
+popul[19]/100 - mean(global_mean)
+popul[19]/100 - mean(boo_mean3)
 
 mean(boo_mean3); mean(sqrt(boo_var3))
 mean(simple_mean); mean(sqrt(simple_var))
