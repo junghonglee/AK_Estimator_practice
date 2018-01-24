@@ -50,31 +50,37 @@ ak_est <- matrix(0,simul,2)
 trial_ak_estimator2 <- NULL
 trial_ak_estimator3 <- NULL
 trial_ak_estimator4 <- NULL
+trial_ak_estimator5 <- NULL
 
 simple_var1 <- NULL
 simple_var2 <- NULL
 simple_var3 <- NULL
+simple_var4 <- NULL
 simple_mean1 <- NULL
 simple_mean2 <- NULL
 simple_mean3 <- NULL
+simple_mean4 <- NULL
 
 boo_sum1 <- NULL
 boo_sum2 <- NULL
 boo_sum3 <- NULL
+boo_sum4 <- NULL
 boo_mean1 <- 0
 boo_mean2 <- 0
 boo_mean3 <- 0
+boo_mean4 <- 0
 boo_var1 <- NULL
 boo_var2 <- NULL
 boo_var3 <- NULL
+boo_var4 <- NULL
 
 ak_sim <- NULL
 ak_sim2 <-NULL
 ak_sim3 <-NULL
+ak_sim4 <-NULL
 
 global_var <- NULL
 global_mean <- NULL 
-
 
 e_time <- proc.time()
 ###########################################################
@@ -82,14 +88,13 @@ e_time <- proc.time()
 
 for (i in 1:simul){
   
-  
   #########################################
   # sampling id numbers for the population#
   #########################################
   
   # initial setting
   no <- seq(1,15000)
-  giri <- 19
+  giri <- 20                              #Samping length 
   sample_no <- matrix(0,1500,giri)
   
   
@@ -126,12 +131,15 @@ for (i in 1:simul){
   all_variance <- matrix(0,10,10)
   all_variance2 <- matrix(0,10,10)
   all_variance3 <- matrix(0,10,10)
+  all_variance4 <- matrix(0,10,10)
   all_mean <- matrix(0,10,10)
   all_mean2 <- matrix(0,10,10)
   all_mean3 <- matrix(0,10,10)
+  all_mean4 <- matrix(0,10,10)
   all_mse <- matrix(0,10,10)
   all_mse2 <- matrix(0,10,10)
   all_mse3 <- matrix(0,10,10)
+  all_mse4 <- matrix(0,10,10)
   
   a_i <- seq(from =0, to=1, by = 0.1)
   k_i <- seq(from =0, to=1, by = 0.1)
@@ -139,10 +147,12 @@ for (i in 1:simul){
   ak_mean <- NULL
   ak_mean2 <- NULL
   ak_mean3 <- NULL
+  ak_mean4 <- NULL
   
   ak_var <- NULL
   ak_var2 <- NULL
   ak_var3 <- NULL
+  ak_var4 <- NULL
   
   
   # Global AK Estimator variables#
@@ -275,6 +285,46 @@ for (i in 1:simul){
   ak_mean3[t] <- all_mean3[ak_max[1],ak_max[2]]
   ak_var3[t] <- all_variance3[ak_max[1],ak_max[2]]
   
+  ###########
+  # 4 Step  #
+  ###########
+  
+  delta <- NULL
+  ak_sim3 <-NULL
+  
+  for (a in 1:10){
+    for (k in 1:10){
+      for (boo in 1:boot_simul) {
+        
+        t <-20 
+        
+        new_input <- sample(sample_no[1:100,t], 100, replace=T)
+        old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
+        delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
+        
+        ak_sim4[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_mean3[t-1] + delta[t])
+        boo_sum4[boo] <- ak_sim4[t]
+        
+      }
+      
+      # Optimizing A and K value #
+      all_variance4[a,k] <- var(boo_sum4)
+      all_mean4[a,k] <- mean(boo_sum4)
+      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean4[a,k])^2 + all_variance4[a,k]
+    }
+  }
+  
+  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
+  
+  a <- a_i[ak_max[1]]
+  k <- k_i[ak_max[2]]
+  
+  # AK estimator value for the optimized A and K value #
+  ak_mean4[t] <- all_mean4[ak_max[1],ak_max[2]]
+  ak_var4[t] <- all_variance4[ak_max[1],ak_max[2]]
+  
+  
+  
   ###########################
   # Global A,K Optimization #
   ###########################
@@ -308,6 +358,13 @@ for (i in 1:simul){
         global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
         
         
+        t <-20
+        new_input <- sample(sample_no[1:100,t], 100, replace=T)
+        old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
+        delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
+        
+        global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
+        
         global_booth[boo] <- global_ak_sim[t]
         
       }
@@ -335,10 +392,12 @@ for (i in 1:simul){
   sample_boot1 <- NULL
   sample_boot2 <- NULL
   sample_boot3 <- NULL
+  sample_boot4 <- NULL
   sample_boot1 <- sample(sample_no[,17], 1500, replace=T)
   sample_boot2 <- sample(sample_no[,18], 1500, replace=T)
   sample_boot3 <- sample(sample_no[,19], 1500, replace=T)
-  simple_mean[i] <- mean(data[sample_boot3])
+  sample_boot4 <- sample(sample_no[,20], 1500, replace=T)
+  simple_mean[i] <- mean(data[sample_boot4])
   
   ######################
   # Result Saving Part #
@@ -348,19 +407,23 @@ for (i in 1:simul){
   boo_var1[i] <- ak_var[17]
   boo_var2[i] <- ak_var2[18]
   boo_var3[i] <- ak_var3[19]
-  global_var[i] <- ak_var_global[19]
+  boo_var4[i] <- ak_var3[20]
+  global_var[i] <- ak_var_global[20]
   simple_var1[i] <- var(data[sample_boot1])
   simple_var2[i] <- var(data[sample_boot2])
   simple_var3[i] <- var(data[sample_boot3])
+  simple_var4[i] <- var(data[sample_boot4])
   
   
   boo_mean1[i] <- ak_mean[17]
   boo_mean2[i] <- ak_mean2[18]
   boo_mean3[i] <- ak_mean3[19]
+  boo_mean4[i] <- ak_mean3[20]
   global_mean[i] <- ak_mean_global[19]
   simple_mean1[i] <- mean(data[sample_boot1])
   simple_mean2[i] <- mean(data[sample_boot2])
   simple_mean3[i] <- mean(data[sample_boot3])
+  simple_mean4[i] <- mean(data[sample_boot4])
   
   ######################################
   
@@ -369,14 +432,7 @@ for (i in 1:simul){
   trial_ak_estimator2[i] <- ak_mean[17]
   trial_ak_estimator3[i] <- ak_mean2[18]
   trial_ak_estimator4[i] <- ak_mean3[19]
-  
-  result[i,1] <- simple_mean1[i]-boo_mean1[i]
-  result[i,2] <- simple_mean2[i]-boo_mean2[i]
-  result[i,3] <- simple_mean3[i]-boo_mean3[i]
-  result[i,4] <- popul[19]/100 - simple_mean3[i]
-  result[i,5] <- popul[17]/100 - boo_mean1[i]
-  result[i,6] <- popul[18]/100 - boo_mean2[i]
-  result[i,7] <- popul[19]/100 - boo_mean3[i]
+  trial_ak_estimator5[i] <- ak_mean3[20]
   
   cat( "overall =", i/simul*100 ,"%\n")
 }
@@ -390,22 +446,33 @@ cat("simulation =", simul," ");cat("bootstrap =", boot_simul," "); cat("Time =",
 #### SIMULATION  END #####
 ##########################
 
-
 ###########################################################
 
-head(result)
-
 #Variance differnce test
-var_diff <- matrix(0,1,8)
+var_diff <- matrix(0,1,9)
 var_diff[1,1] <- mean(sqrt(boo_var1)) / mean(sqrt(boo_var2))
-var_diff[1,2] <- mean(sqrt(boo_var1)) / mean(sqrt(boo_var3))
-var_diff[1,3] <- mean(sqrt(boo_var2)) / mean(sqrt(boo_var3))
+var_diff[1,2] <- mean(sqrt(boo_var2)) / mean(sqrt(boo_var3))
+var_diff[1,3] <- mean(sqrt(boo_var3)) / mean(sqrt(boo_var4))
 var_diff[1,4] <- mean(sqrt(simple_var1)) / mean(sqrt(boo_var1))
 var_diff[1,5] <- mean(sqrt(simple_var2)) / mean(sqrt(boo_var2))
 var_diff[1,6] <- mean(sqrt(simple_var3)) / mean(sqrt(boo_var3))
-var_diff[1,7] <- mean(sqrt(global_var)) / mean(sqrt(boo_var3))
-var_diff[1,8] <- mean(sqrt(simple_var3)) / mean(sqrt(global_var))
-colnames(var_diff) <- (c("ak2/ak3","ak2/ak4","ak3/ak4","simple/ak2", "simple/ak3","simple/Local", "Global/Local", "simple/Global"))
+var_diff[1,7] <- mean(sqrt(simple_var4)) / mean(sqrt(boo_var4))
+var_diff[1,8] <- mean(sqrt(global_var)) / mean(sqrt(boo_var4))
+var_diff[1,9] <- mean(sqrt(simple_var3)) / mean(sqrt(global_var))
+colnames(var_diff) <- (c("ak2/ak3","ak3/ak4","ak4/ak5","simple/ak2", "simple/ak3","simple/Local", "Global/Local", "simple/Global"))
+
+#Mean difference test
+mean_diff <- matrix(0,1,9)
+mean_diff[1] <- mean(simple_mean1/boo_mean1)
+mean_diff[2] <- mean(simple_mean2/boo_mean2)
+mean_diff[3] <- mean(simple_mean3/boo_mean3)
+mean_diff[4] <- mean(simple_mean4/boo_mean4)
+mean_diff[5] <- mean(popul[20]/100 / simple_mean4)
+mean_diff[6] <- mean(popul[17]/100 / boo_mean1)
+mean_diff[7] <- mean(popul[18]/100 / boo_mean2)
+mean_diff[8] <- mean(popul[19]/100 / boo_mean3)
+mean_diff[9] <- mean(popul[20]/100 / boo_mean4)
+colnames(mean_diff) <- (c("SRS/ak2","SRS/ak3","SRS/ak4","SRS/ak5", "Popul/SRS","Popul/ak2", "Popul/ak3", "Popul/ak4", "Popul/ak5"))
 
 #mean difference test
 mean_diff <- colMeans(result)
@@ -418,7 +485,6 @@ colnames(boot_result) <- (c("ak_3step","ak_2step","ak_1step"))
 boot_result[1] <- mean(sqrt(boo_var3)) / sd(boo_mean3)
 boot_result[2] <- mean(sqrt(boo_var2)) / sd(boo_mean2)
 boot_result[3] <- mean(sqrt(boo_var1)) / sd(boo_mean1)
-
 
 popul[19]/100 - mean(global_mean)
 popul[19]/100 - mean(boo_mean3)
