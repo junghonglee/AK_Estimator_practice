@@ -14,4 +14,5 @@ boot_result[1] <- mean(sqrt(simul_2000[[6]])) / sd(simul_2000[[2]])
 boot_result[2] <- mean(sqrt(simul_2000[[7]])) / sd(simul_2000[[3]])
 boot_result[3] <- mean(sqrt(simul_2000[[8]])) / sd(simul_2000[[4]])
 boot_result[4] <- mean(sqrt(simul_2000[[9]])) / sd(simul_2000[[5]])
-boot_result
+print(boot_result)
+
