@@ -1,0 +1,18 @@
+[Date 170222]
+논문 시뮬레이션 방향
+
+1. MSE, VAR, CV 최소화 하는 방식으로 각 Simulation 시행 (Local & Global)
+  - Local 및 Global 각각 소요되는 시간을 파악해야함
+  - 총 6 번의 Simulation 필요
+
+2. Random Missing 빠지고 들어오는 개수가 매 simulation 마다 Random 하게 실시. 
+  - 70~130 개 사이로 (Noraml Dist. 로 해도 무관함)
+
+
+
+
+
+
+
+
+
