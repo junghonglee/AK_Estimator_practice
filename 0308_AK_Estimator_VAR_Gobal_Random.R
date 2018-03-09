@@ -444,20 +444,20 @@ for (i in 1:simul){
   ######################
   
   ## MEAN and VAR of bootstrap
-  boo_var1[i] <- ak_var[17]
-  boo_var2[i] <- ak_var2[18]
-  boo_var3[i] <- ak_var3[19]
-  boo_var4[i] <- ak_var4[20]
+  #boo_var1[i] <- ak_var[17]
+  #boo_var2[i] <- ak_var2[18]
+  #boo_var3[i] <- ak_var3[19]
+  #boo_var4[i] <- ak_var4[20]
   global_var[i] <- ak_var_global[20]
   simple_var1[i] <- var(data[sample_boot1])
   simple_var2[i] <- var(data[sample_boot2])
   simple_var3[i] <- var(data[sample_boot3])
   simple_var4[i] <- var(data[sample_boot4])
   
-  boo_mean1[i] <- ak_mean[17]
-  boo_mean2[i] <- ak_mean2[18]
-  boo_mean3[i] <- ak_mean3[19]
-  boo_mean4[i] <- ak_mean4[20]
+  #boo_mean1[i] <- ak_mean[17]
+  #boo_mean2[i] <- ak_mean2[18]
+  #boo_mean3[i] <- ak_mean3[19]
+  #boo_mean4[i] <- ak_mean4[20]
   
   global_mean[i] <- ak_mean_global[20]
   simple_mean1[i] <- mean(data[sample_boot1])
