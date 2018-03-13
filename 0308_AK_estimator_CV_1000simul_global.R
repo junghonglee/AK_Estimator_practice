@@ -91,35 +91,70 @@ e_time <- proc.time()
 
 for (i in 1:simul){
   
-  #########################################
-  # sampling id numbers for the population#
-  #########################################
-
+  # #########################################
+  # # sampling id numbers for the population#
+  # #########################################
+  # 
+  # # initial setting
+  # no <- seq(1,15000)
+  # giri <- 20                              #Samping length
+  # sample_no <- matrix(0,1500,giri)
+  # 
+  # 
+  # 
+  # for (t in 1:giri){
+  #   if (t==1) {
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  #   }
+  # 
+  #   else {
+  #     temp <- sample_no[1401:1500,t-1]
+  #     sample_no[101:1500,t] <- sample_no[1:1400,t-1]
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  # 
+  #     # adding fallout from the sample
+  #     no <- c(no, temp)
+  #     no <- no[no[]!=0]  # deleating 0 value
+  #     no <- sort(no)
+  #   }
+  # }
+  
+  #################################################
+  # sampling random id numbers for the population #
+  #################################################
+  
   # initial setting
   no <- seq(1,15000)
-  giri <- 20                              #Samping length
+  giri <- 20                                     #Samping length
+  cuchul <- round(rnorm(giri, mean=100, sd=30))   #Random sampling through normal dist
   sample_no <- matrix(0,1500,giri)
-
-
-
+  
   for (t in 1:giri){
     if (t==1) {
-      sample_no[1:100,t] <- sample(no,100, replace=F)
-
-      for (j in 1:100){
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
+      
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
     }
-
+    
     else {
-      temp <- sample_no[1401:1500,t-1]
-      sample_no[101:1500,t] <- sample_no[1:1400,t-1]
-      sample_no[1:100,t] <- sample(no,100, replace=F)
-
-      for (j in 1:100){
+      temp <- sample_no[(cuchul[t]+1):1500,t-1]
+      sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
+      
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
-
+      
       # adding fallout from the sample
       no <- c(no, temp)
       no <- no[no[]!=0]  # deleating 0 value
@@ -127,41 +162,6 @@ for (i in 1:simul){
     }
   }
   
-  # #################################################
-  # # sampling random id numbers for the population #
-  # #################################################
-  # 
-  # # initial setting
-  # no <- seq(1,15000)
-  # giri <- 20                                     #Samping length
-  # cuchul <- round(rnorm(giri, mean=100, sd=30))   #Random sampling through normal dist
-  # sample_no <- matrix(0,1500,giri)
-  # 
-  # for (t in 1:giri){
-  #   if (t==1) {
-  #     sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-  #     
-  #     for (j in 1:cuchul[t]){
-  #       no <- no[no[]!=sample_no[j,t]]
-  #     }
-  #   }
-  #   
-  #   else {
-  #     temp <- sample_no[(cuchul[t]+1):1500,t-1]
-  #     sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
-  #     sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-  #     
-  #     for (j in 1:cuchul[t]){
-  #       no <- no[no[]!=sample_no[j,t]]
-  #     }
-  #     
-  #     # adding fallout from the sample
-  #     no <- c(no, temp)
-  #     no <- no[no[]!=0]  # deleating 0 value
-  #     no <- sort(no)
-  #   }
-  # }
-  # 
   
   #######################################################
   # Getting the beset value for a and k for minimum mse #
@@ -175,10 +175,10 @@ for (i in 1:simul){
   all_mean2 <- matrix(0,10,10)
   all_mean3 <- matrix(0,10,10)
   all_mean4 <- matrix(0,10,10)
-  all_mse <- matrix(0,10,10)
-  all_mse2 <- matrix(0,10,10)
-  all_mse3 <- matrix(0,10,10)
-  all_mse4 <- matrix(0,10,10)
+  all_CV <- matrix(0,10,10)
+  all_CV2 <- matrix(0,10,10)
+  all_CV3 <- matrix(0,10,10)
+  all_CV4 <- matrix(0,10,10)
   
   a_i <- seq(from =0, to=1, by = 0.1)
   k_i <- seq(from =0, to=1, by = 0.1)
@@ -199,7 +199,7 @@ for (i in 1:simul){
   global_booth <- NULL
   all_variance_global <- matrix(0,10,10)
   all_mean_global <- matrix(0,10,10)
-  all_mse_global <- matrix(0,10,10)
+  all_CV_global <- matrix(0,10,10)
   ak_mean_global <- NULL
   ak_var_global <- NULL
   
@@ -210,220 +210,220 @@ for (i in 1:simul){
   # Initial value for AK simulation is simple mean of the data #
   
   ak_sim[16] <- mean(data[,16])
-  
-  ############
-  # 1st step #
-  ############
-  
-  for (a in 1:10){
-    for (k in 1:10){
-      # from 16th full set is made #
-      t <- 17
-      for (boo in 1:boot_simul) {
-        
-        
-        
-        delta <- NULL
-        
-        new_input <- sample(sample_no[1:100,t], 100, replace=T)
-        old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
-        delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
-        
-        ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_sim[t-1] + delta[t])
-        boo_sum1[boo] <- ak_sim[t]
-      }
-      
-      # Optimizing A and K value #
-      all_variance[a,k] <- var(boo_sum1)
-      all_mean[a,k] <- mean(boo_sum1)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean[a,k])^2 + all_variance[a,k]
-    }
-  }
-  
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
-  
-  a <- a_i[ak_max[1]]
-  k <- k_i[ak_max[2]]
-  
-  # AK estimator value for the optimized A and K value #
-  ak_mean[t] <- all_mean[ak_max[1],ak_max[2]]
-  ak_var[t] <- all_variance[ak_max[1],ak_max[2]]
-  
-  ############
-  # 2nd step #
-  ############
-  
-  delta <- NULL
-  ak_sim2 <-NULL
-  
-  for (a in 1:10){
-    for (k in 1:10){
-      for (boo in 1:boot_simul) {
-        
-        
-        t <-18 
-        new_input <- sample(sample_no[1:100,t], 100, replace=T)
-        old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
-        delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
-        
-        ak_sim2[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_mean[t-1] + delta[t])
-        boo_sum2[boo] <- ak_sim2[t]
-      }
-      
-      # Optimizing A and K value #
-      all_variance2[a,k] <- var(boo_sum2)
-      all_mean2[a,k] <- mean(boo_sum2)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean2[a,k])^2 + all_variance2[a,k]
-    }
-  }
-  
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
-  
-  a <- a_i[ak_max[1]]
-  k <- k_i[ak_max[2]]
-  
-  # AK estimator value for the optimized A and K value #
-  ak_mean2[t] <- all_mean2[ak_max[1], ak_max[2]]
-  ak_var2[t] <- all_variance2[ak_max[1],ak_max[2]]
-  
-  ###########
-  # 3 Step  #
-  ###########
-  
-  delta <- NULL
-  ak_sim3 <-NULL
-  
-  for (a in 1:10){
-    for (k in 1:10){
-      for (boo in 1:boot_simul) {
-        
-        t <-19 
-        
-        new_input <- sample(sample_no[1:100,t], 100, replace=T)
-        old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
-        delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
-        
-        ak_sim3[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_mean2[t-1] + delta[t])
-        boo_sum3[boo] <- ak_sim3[t]
-        
-      }
-      
-      # Optimizing A and K value #
-      all_variance3[a,k] <- var(boo_sum3)
-      all_mean3[a,k] <- mean(boo_sum3)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean3[a,k])^2 + all_variance3[a,k]
-    }
-  }
-  
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
-  
-  a <- a_i[ak_max[1]]
-  k <- k_i[ak_max[2]]
-  
-  # AK estimator value for the optimized A and K value #
-  ak_mean3[t] <- all_mean3[ak_max[1],ak_max[2]]
-  ak_var3[t] <- all_variance3[ak_max[1],ak_max[2]]
-  
-  ###########
-  # 4 Step  #
-  ###########
-  
-  delta <- NULL
-  ak_sim3 <-NULL
-  
-  for (a in 1:10){
-    for (k in 1:10){
-      for (boo in 1:boot_simul) {
-        
-        t <-20 
-        
-        new_input <- sample(sample_no[1:100,t], 100, replace=T)
-        old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
-        delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
-        
-        ak_sim4[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_mean3[t-1] + delta[t])
-        boo_sum4[boo] <- ak_sim4[t]
-        
-      }
-      
-      # Optimizing A and K value #
-      all_variance4[a,k] <- var(boo_sum4)
-      all_mean4[a,k] <- mean(boo_sum4)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean4[a,k])^2 + all_variance4[a,k]
-    }
-  }
-  
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
-  
-  a <- a_i[ak_max[1]]
-  k <- k_i[ak_max[2]]
-  
-  # AK estimator value for the optimized A and K value #
-  ak_mean4[t] <- all_mean4[ak_max[1],ak_max[2]]
-  ak_var4[t] <- all_variance4[ak_max[1],ak_max[2]]
-  
-  
-  
-  # ###########################
-  # # Global A,K Optimization #
-  # ###########################
   # 
-  # global_ak_sim[16] <- mean(data[,16])
+  # ############
+  # # 1st step #
+  # ############
   # 
   # for (a in 1:10){
   #   for (k in 1:10){
+  #     # from 16th full set is made #
+  #     t <- 17
   #     for (boo in 1:boot_simul) {
-  #       t <-17
-  # 
+  #       
+  #       
+  #       
+  #       delta <- NULL
+  #       
   #       new_input <- sample(sample_no[1:100,t], 100, replace=T)
   #       old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
   #       delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
   #       
-  #       global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
+  #       ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_sim[t-1] + delta[t])
+  #       boo_sum1[boo] <- ak_sim[t]
+  #     }
+  #     
+  #     # Optimizing A and K value #
+  #     all_variance[a,1k] <- var(boo_sum1)
+  #     all_mean[a,k] <- mean(boo_sum1)
+  #     all_CV[a,k] <- sqrt(all_variance[a,k])/all_mean[a,k]
+  #   }
+  # }
+  # 
+  # ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
+  # 
+  # a <- a_i[ak_max[1]]
+  # k <- k_i[ak_max[2]]
+  # 
+  # # AK estimator value for the optimized A and K value #
+  # ak_mean[t] <- all_mean[ak_max[1],ak_max[2]]
+  # ak_var[t] <- all_variance[ak_max[1],ak_max[2]]
+  # 
+  # ############
+  # # 2nd step #
+  # ############
+  # 
+  # delta <- NULL
+  # ak_sim2 <-NULL
+  # 
+  # for (a in 1:10){
+  #   for (k in 1:10){
+  #     for (boo in 1:boot_simul) {
+  #       
   #       
   #       t <-18 
   #       new_input <- sample(sample_no[1:100,t], 100, replace=T)
   #       old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
   #       delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
   #       
-  #       global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
+  #       ak_sim2[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_mean[t-1] + delta[t])
+  #       boo_sum2[boo] <- ak_sim2[t]
+  #     }
+  #     
+  #     # Optimizing A and K value #
+  #     all_variance2[a,k] <- var(boo_sum2)
+  #     all_mean2[a,k] <- mean(boo_sum2)
+  #     all_CV[a,k] <- sqrt(all_variance2[a,k])/all_mean2[a,k]
+  #   }
+  # }
+  # 
+  # ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
+  # 
+  # a <- a_i[ak_max[1]]
+  # k <- k_i[ak_max[2]]
+  # 
+  # # AK estimator value for the optimized A and K value #
+  # ak_mean2[t] <- all_mean2[ak_max[1], ak_max[2]]
+  # ak_var2[t] <- all_variance2[ak_max[1],ak_max[2]]
+  # 
+  # ###########
+  # # 3 Step  #
+  # ###########
+  # 
+  # delta <- NULL
+  # ak_sim3 <-NULL
+  # 
+  # for (a in 1:10){
+  #   for (k in 1:10){
+  #     for (boo in 1:boot_simul) {
   #       
+  #       t <-19 
   #       
-  #       t <-19
   #       new_input <- sample(sample_no[1:100,t], 100, replace=T)
   #       old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
   #       delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
   #       
-  #       global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
-  #       
-  #       
-  #       t <-20
-  #       new_input <- sample(sample_no[1:100,t], 100, replace=T)
-  #       old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
-  #       delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
-  #       
-  #       global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
-  #       
-  #       global_booth[boo] <- global_ak_sim[t]
+  #       ak_sim3[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_mean2[t-1] + delta[t])
+  #       boo_sum3[boo] <- ak_sim3[t]
   #       
   #     }
   #     
   #     # Optimizing A and K value #
-  #     all_variance_global[a,k] <- var(global_booth)
-  #     all_mean_global[a,k] <- mean(global_booth)
-  #     all_mse_global[a,k] <- ((unemployment[[t]]/100) - all_mean_global[a,k])^2 + all_variance_global[a,k]
+  #     all_variance3[a,k] <- var(boo_sum3)
+  #     all_mean3[a,k] <- mean(boo_sum3)
+  #     all_CV[a,k] <- sqrt(all_variance3[a,k])/all_mean3[a,k]
   #   }
   # }
   # 
-  # ak_max_global <- which(all_mse_global == min(all_mse_global), arr.ind = TRUE)    
+  # ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
   # 
-  # a <- a_i[ak_max_global[1]]
-  # k <- k_i[ak_max_global[2]]
+  # a <- a_i[ak_max[1]]
+  # k <- k_i[ak_max[2]]
   # 
   # # AK estimator value for the optimized A and K value #
-  # ak_mean_global[t] <- all_mean_global[ak_max[1],ak_max[2]]
-  # ak_var_global[t] <- all_variance_global[ak_max[1],ak_max[2]]
+  # ak_mean3[t] <- all_mean3[ak_max[1],ak_max[2]]
+  # ak_var3[t] <- all_variance3[ak_max[1],ak_max[2]]
+  # 
+  # ###########
+  # # 4 Step  #
+  # ###########
+  # 
+  # delta <- NULL
+  # ak_sim3 <-NULL
+  # 
+  # for (a in 1:10){
+  #   for (k in 1:10){
+  #     for (boo in 1:boot_simul) {
+  #       
+  #       t <-20 
+  #       
+  #       new_input <- sample(sample_no[1:100,t], 100, replace=T)
+  #       old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
+  #       delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
+  #       
+  #       ak_sim4[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(ak_mean3[t-1] + delta[t])
+  #       boo_sum4[boo] <- ak_sim4[t]
+  #       
+  #     }
+  #     
+  #     # Optimizing A and K value #
+  #     all_variance4[a,k] <- var(boo_sum4)
+  #     all_mean4[a,k] <- mean(boo_sum4)
+  #     all_CV[a,k] <- sqrt(all_variance4[a,k])/all_mean4[a,k]
+  #   }
+  # }
+  # 
+  # ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
+  # 
+  # a <- a_i[ak_max[1]]
+  # k <- k_i[ak_max[2]]
+  # 
+  # # AK estimator value for the optimized A and K value #
+  # ak_mean4[t] <- all_mean4[ak_max[1],ak_max[2]]
+  # ak_var4[t] <- all_variance4[ak_max[1],ak_max[2]]
+  # 
+  # 
+
+  # ###########################
+  # # Global A,K Optimization #
+  # ###########################
   
+   global_ak_sim[16] <- mean(data[,16])
+  
+  for (a in 1:10){
+    for (k in 1:10){
+      for (boo in 1:boot_simul) {
+        t <-17
+  
+         new_input <- sample(sample_no[1:100,t], 100, replace=T)
+        old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
+        delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
+  
+         global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
+  
+         t <-18
+         new_input <- sample(sample_no[1:100,t], 100, replace=T)
+         old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
+         delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
+  
+        global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
+  
+  
+         t <-19
+         new_input <- sample(sample_no[1:100,t], 100, replace=T)
+         old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
+         delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
+  
+       global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
+
+
+       t <-20
+        new_input <- sample(sample_no[1:100,t], 100, replace=T)
+       old_input <- sample(sample_no[101:1500,t], 1400, replace=T)
+       delta[t] <- mean(data[old_input,t]-data[old_input,t-1])
+
+       global_ak_sim[t] <- 1/1500*(  (1-k_i[k]+a_i[a])*sum(data[new_input,t]) + (1-k_i[k]-(100/1400)*a_i[a])*sum(data[old_input,t])  )  + k_i[k]*(global_ak_sim[t-1] + delta[t])
+
+       global_booth[boo] <- global_ak_sim[t]
+
+     }
+
+     # Optimizing A and K value #
+     all_variance_global[a,k] <- var(global_booth)
+     all_mean_global[a,k] <- mean(global_booth)
+     all_CV_global[a,k] <- sqrt(all_variance_global[a,k])/all_mean_global[a,k]
+   }
+  }
+  
+  ak_max_global <- which(all_CV_global == min(all_CV_global), arr.ind = TRUE)
+  
+  a <- a_i[ak_max_global[1]]
+  k <- k_i[ak_max_global[2]]
+
+  # AK estimator value for the optimized A and K value #
+  ak_mean_global[t] <- all_mean_global[ak_max[1],ak_max[2]]
+  ak_var_global[t] <- all_variance_global[ak_max[1],ak_max[2]]
+
   #########################
   #Simple Random Sampling #
   #########################

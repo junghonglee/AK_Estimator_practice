@@ -37,7 +37,7 @@ data <- population
 popul <- as.matrix(unemployment)
 
 # Number of simulation times
-simul <- 500
+simul <- 1000
 boot_simul <- 1000
 
 #Result Data
@@ -88,32 +88,67 @@ e_time <- proc.time()
 
 for (i in 1:simul){
   
-  #########################################
-  # sampling id numbers for the population#
-  #########################################
+  # #########################################
+  # # sampling id numbers for the population#
+  # #########################################
+  # 
+  # # initial setting
+  # no <- seq(1,15000)
+  # giri <- 20                              #Samping length
+  # sample_no <- matrix(0,1500,giri)
+  # 
+  # 
+  # 
+  # for (t in 1:giri){
+  #   if (t==1) {
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  #   }
+  # 
+  #   else {
+  #     temp <- sample_no[1401:1500,t-1]
+  #     sample_no[101:1500,t] <- sample_no[1:1400,t-1]
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  # 
+  #     # adding fallout from the sample
+  #     no <- c(no, temp)
+  #     no <- no[no[]!=0]  # deleating 0 value
+  #     no <- sort(no)
+  #   }
+  # }
+
+  #################################################
+  # sampling random id numbers for the population #
+  #################################################
 
   # initial setting
   no <- seq(1,15000)
-  giri <- 20                              #Samping length
+  giri <- 20                                     #Samping length
+  cuchul <- round(rnorm(giri, mean=100, sd=2))   #Random sampling through normal dist
   sample_no <- matrix(0,1500,giri)
-
-
 
   for (t in 1:giri){
     if (t==1) {
-      sample_no[1:100,t] <- sample(no,100, replace=F)
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
 
-      for (j in 1:100){
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
     }
 
     else {
-      temp <- sample_no[1401:1500,t-1]
-      sample_no[101:1500,t] <- sample_no[1:1400,t-1]
-      sample_no[1:100,t] <- sample(no,100, replace=F)
+      temp <- sample_no[(cuchul[t]+1):1500,t-1]
+      sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
 
-      for (j in 1:100){
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
 
@@ -123,41 +158,6 @@ for (i in 1:simul){
       no <- sort(no)
     }
   }
-# 
-#   #################################################
-#   # sampling random id numbers for the population #
-#   #################################################
-#   
-#   # initial setting
-#   no <- seq(1,15000)
-#   giri <- 20                                     #Samping length 
-#   cuchul <- round(rnorm(giri, mean=100, sd=2))   #Random sampling through normal dist
-#   sample_no <- matrix(0,1500,giri)
-#   
-#   for (t in 1:giri){
-#     if (t==1) {
-#       sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-#       
-#       for (j in 1:cuchul[t]){
-#         no <- no[no[]!=sample_no[j,t]]
-#       }
-#     }
-#     
-#     else {
-#       temp <- sample_no[(cuchul[t]+1):1500,t-1]
-#       sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
-#       sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-#       
-#       for (j in 1:cuchul[t]){
-#         no <- no[no[]!=sample_no[j,t]]
-#       }
-#       
-#       # adding fallout from the sample
-#       no <- c(no, temp)
-#       no <- no[no[]!=0]  # deleating 0 value
-#       no <- sort(no)
-#     }
-#   }
   
   
   #######################################################
@@ -524,3 +524,8 @@ boot_result[4] <- mean(sqrt(boo_var4)) / sd(boo_mean4)
 
 popul[20]/100 / mean(global_mean)
 popul[20]/100 - mean(boo_mean4)
+
+vars <- cbind(boo_var1, boo_var2, boo_var3, boo_var4)
+means <- cbind(boo_mean1, boo_mean2, boo_mean3, boo_mean4)
+result <- cbind(means, vars)
+write.csv(result, file = "C:\\Users\\JHL\\Desktop\\thesis\\Local vs Global\\0125.csv")

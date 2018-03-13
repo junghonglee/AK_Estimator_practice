@@ -38,7 +38,7 @@ popul <- as.matrix(unemployment)
 
 # Number of simulation times
 simul <- 100
-boot_simul <- 100
+boot_simul <- 1000
 
 #Result Data
 result <- matrix(0,simul,7)
@@ -156,6 +156,7 @@ for (i in 1:simul){
   
   # SRS variables #
   sample_mean <- NULL
+  simple_mean <- NULL
   
   # Initial value for AK simulation is simple mean of the data #
   
@@ -337,8 +338,7 @@ for (i in 1:simul){
   sample_boot1 <- sample(sample_no[,17], 1500, replace=T)
   sample_boot2 <- sample(sample_no[,18], 1500, replace=T)
   sample_boot3 <- sample(sample_no[,19], 1500, replace=T)
-  simple_var[i] <- var(data[sample_boot,t])
-  simple_mean[i] <- mean(data[sample_boot,t])
+  simple_mean[i] <- mean(data[sample_boot3])
   
   ######################
   # Result Saving Part #
@@ -349,18 +349,18 @@ for (i in 1:simul){
   boo_var2[i] <- ak_var2[18]
   boo_var3[i] <- ak_var3[19]
   global_var[i] <- ak_var_global[19]
-  simple_var1[i] <- var(data[sample_boot,17])
-  simple_var2[i] <- var(data[sample_boot,18])
-  simple_var3[i] <- var(data[sample_boot,19])
+  simple_var1[i] <- var(data[sample_boot1])
+  simple_var2[i] <- var(data[sample_boot2])
+  simple_var3[i] <- var(data[sample_boot3])
   
   
   boo_mean1[i] <- ak_mean[17]
   boo_mean2[i] <- ak_mean2[18]
   boo_mean3[i] <- ak_mean3[19]
   global_mean[i] <- ak_mean_global[19]
-  simple_mean1[i] <- mean(data[sample_boot,17])
-  simple_mean2[i] <- mean(data[sample_boot,18])
-  simple_mean3[i] <- mean(data[sample_boot,19])
+  simple_mean1[i] <- mean(data[sample_boot1])
+  simple_mean2[i] <- mean(data[sample_boot2])
+  simple_mean3[i] <- mean(data[sample_boot3])
   
   ######################################
   
@@ -397,8 +397,8 @@ head(result)
 
 #Variance differnce test
 var_diff <- matrix(0,1,7)
-var_diff[1,1] <- mean(sqrt(all_variance)) / mean(sqrt(boo_var1))
-var_diff[1,2] <- mean(sqrt(all_variance2)) / mean(sqrt(boo_var2))
+var_diff[1,1] <- mean(sqrt(all_variance)) / mean(sqrt(boo_var1[17]))
+var_diff[1,2] <- mean(sqrt(all_variance2)) / mean(sqrt(boo_var2[18]))
 var_diff[1,3] <- mean(sqrt(all_variance3)) / mean(sqrt(boo_var3))
 var_diff[1,4] <- mean(sqrt(simple_var1)) / mean(sqrt(boo_var1))
 var_diff[1,5] <- mean(sqrt(simple_var2)) / mean(sqrt(boo_var2))

@@ -91,35 +91,70 @@ e_time <- proc.time()
 
 for (i in 1:simul){
   
-  #########################################
-  # sampling id numbers for the population#
-  #########################################
-
+  # #########################################
+  # # sampling id numbers for the population#
+  # #########################################
+  # 
+  # # initial setting
+  # no <- seq(1,15000)
+  # giri <- 20                              #Samping length
+  # sample_no <- matrix(0,1500,giri)
+  # 
+  # 
+  # 
+  # for (t in 1:giri){
+  #   if (t==1) {
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  #   }
+  # 
+  #   else {
+  #     temp <- sample_no[1401:1500,t-1]
+  #     sample_no[101:1500,t] <- sample_no[1:1400,t-1]
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  # 
+  #     # adding fallout from the sample
+  #     no <- c(no, temp)
+  #     no <- no[no[]!=0]  # deleating 0 value
+  #     no <- sort(no)
+  #   }
+  # }
+  
+  #################################################
+  # sampling random id numbers for the population #
+  #################################################
+  
   # initial setting
   no <- seq(1,15000)
-  giri <- 20                              #Samping length
+  giri <- 20                                     #Samping length
+  cuchul <- round(rnorm(giri, mean=100, sd=30))   #Random sampling through normal dist
   sample_no <- matrix(0,1500,giri)
-
-
-
+  
   for (t in 1:giri){
     if (t==1) {
-      sample_no[1:100,t] <- sample(no,100, replace=F)
-
-      for (j in 1:100){
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
+      
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
     }
-
+    
     else {
-      temp <- sample_no[1401:1500,t-1]
-      sample_no[101:1500,t] <- sample_no[1:1400,t-1]
-      sample_no[1:100,t] <- sample(no,100, replace=F)
-
-      for (j in 1:100){
+      temp <- sample_no[(cuchul[t]+1):1500,t-1]
+      sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
+      
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
-
+      
       # adding fallout from the sample
       no <- c(no, temp)
       no <- no[no[]!=0]  # deleating 0 value
@@ -127,41 +162,6 @@ for (i in 1:simul){
     }
   }
   
-  # #################################################
-  # # sampling random id numbers for the population #
-  # #################################################
-  # 
-  # # initial setting
-  # no <- seq(1,15000)
-  # giri <- 20                                     #Samping length
-  # cuchul <- round(rnorm(giri, mean=100, sd=30))   #Random sampling through normal dist
-  # sample_no <- matrix(0,1500,giri)
-  # 
-  # for (t in 1:giri){
-  #   if (t==1) {
-  #     sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-  #     
-  #     for (j in 1:cuchul[t]){
-  #       no <- no[no[]!=sample_no[j,t]]
-  #     }
-  #   }
-  #   
-  #   else {
-  #     temp <- sample_no[(cuchul[t]+1):1500,t-1]
-  #     sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
-  #     sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-  #     
-  #     for (j in 1:cuchul[t]){
-  #       no <- no[no[]!=sample_no[j,t]]
-  #     }
-  #     
-  #     # adding fallout from the sample
-  #     no <- c(no, temp)
-  #     no <- no[no[]!=0]  # deleating 0 value
-  #     no <- sort(no)
-  #   }
-  # }
-  # 
   
   #######################################################
   # Getting the beset value for a and k for minimum mse #
@@ -175,10 +175,10 @@ for (i in 1:simul){
   all_mean2 <- matrix(0,10,10)
   all_mean3 <- matrix(0,10,10)
   all_mean4 <- matrix(0,10,10)
-  all_mse <- matrix(0,10,10)
-  all_mse2 <- matrix(0,10,10)
-  all_mse3 <- matrix(0,10,10)
-  all_mse4 <- matrix(0,10,10)
+  all_CV <- matrix(0,10,10)
+  all_CV2 <- matrix(0,10,10)
+  all_CV3 <- matrix(0,10,10)
+  all_CV4 <- matrix(0,10,10)
   
   a_i <- seq(from =0, to=1, by = 0.1)
   k_i <- seq(from =0, to=1, by = 0.1)
@@ -199,7 +199,7 @@ for (i in 1:simul){
   global_booth <- NULL
   all_variance_global <- matrix(0,10,10)
   all_mean_global <- matrix(0,10,10)
-  all_mse_global <- matrix(0,10,10)
+  all_CV_global <- matrix(0,10,10)
   ak_mean_global <- NULL
   ak_var_global <- NULL
   
@@ -236,11 +236,11 @@ for (i in 1:simul){
       # Optimizing A and K value #
       all_variance[a,k] <- var(boo_sum1)
       all_mean[a,k] <- mean(boo_sum1)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean[a,k])^2 + all_variance[a,k]
+      all_CV[a,k] <- sqrt(all_variance[a,k])/all_mean[a,k]
     }
   }
   
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
+  ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
   
   a <- a_i[ak_max[1]]
   k <- k_i[ak_max[2]]
@@ -273,11 +273,11 @@ for (i in 1:simul){
       # Optimizing A and K value #
       all_variance2[a,k] <- var(boo_sum2)
       all_mean2[a,k] <- mean(boo_sum2)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean2[a,k])^2 + all_variance2[a,k]
+      all_CV[a,k] <- sqrt(all_variance2[a,k])/all_mean2[a,k]
     }
   }
   
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
+  ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
   
   a <- a_i[ak_max[1]]
   k <- k_i[ak_max[2]]
@@ -311,11 +311,11 @@ for (i in 1:simul){
       # Optimizing A and K value #
       all_variance3[a,k] <- var(boo_sum3)
       all_mean3[a,k] <- mean(boo_sum3)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean3[a,k])^2 + all_variance3[a,k]
+      all_CV[a,k] <- sqrt(all_variance3[a,k])/all_mean3[a,k]
     }
   }
   
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
+  ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
   
   a <- a_i[ak_max[1]]
   k <- k_i[ak_max[2]]
@@ -349,11 +349,11 @@ for (i in 1:simul){
       # Optimizing A and K value #
       all_variance4[a,k] <- var(boo_sum4)
       all_mean4[a,k] <- mean(boo_sum4)
-      all_mse[a,k] <- ((unemployment[[t]]/100) - all_mean4[a,k])^2 + all_variance4[a,k]
+      all_CV[a,k] <- sqrt(all_variance4[a,k])/all_mean4[a,k]
     }
   }
   
-  ak_max <- which(all_mse == min(all_mse), arr.ind = TRUE)    
+  ak_max <- which(all_CV == min(all_CV), arr.ind = TRUE)    
   
   a <- a_i[ak_max[1]]
   k <- k_i[ak_max[2]]
@@ -411,12 +411,12 @@ for (i in 1:simul){
   #     # Optimizing A and K value #
   #     all_variance_global[a,k] <- var(global_booth)
   #     all_mean_global[a,k] <- mean(global_booth)
-  #     all_mse_global[a,k] <- ((unemployment[[t]]/100) - all_mean_global[a,k])^2 + all_variance_global[a,k]
+  #     all_CV_global[a,k] <- sqrt(all_variance_global[a,k])/all_mean_global[a,k]
   #   }
   # }
   # 
-  # ak_max_global <- which(all_mse_global == min(all_mse_global), arr.ind = TRUE)    
-  # 
+  # ak_max_global <- which(all_CV_global == min(all_CV_global), arr.ind = TRUE)    
+  #
   # a <- a_i[ak_max_global[1]]
   # k <- k_i[ak_max_global[2]]
   # 

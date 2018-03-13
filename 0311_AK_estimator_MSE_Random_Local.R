@@ -28,6 +28,7 @@ for (i in 1:192) {
   popul[i] <- as.matrix(unemployment)[i]
 }
 
+
 #population data input
 data <- population
 popul <- as.matrix(unemployment)
@@ -91,32 +92,67 @@ e_time <- proc.time()
 
 for (i in 1:simul){
   
-  #########################################
-  # sampling id numbers for the population#
-  #########################################
+  # #########################################
+  # # sampling id numbers for the population#
+  # #########################################
+  # 
+  # # initial setting
+  # no <- seq(1,15000)
+  # giri <- 20                              #Samping length
+  # sample_no <- matrix(0,1500,giri)
+  # 
+  # 
+  # 
+  # for (t in 1:giri){
+  #   if (t==1) {
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  #   }
+  # 
+  #   else {
+  #     temp <- sample_no[1401:1500,t-1]
+  #     sample_no[101:1500,t] <- sample_no[1:1400,t-1]
+  #     sample_no[1:100,t] <- sample(no,100, replace=F)
+  # 
+  #     for (j in 1:100){
+  #       no <- no[no[]!=sample_no[j,t]]
+  #     }
+  # 
+  #     # adding fallout from the sample
+  #     no <- c(no, temp)
+  #     no <- no[no[]!=0]  # deleating 0 value
+  #     no <- sort(no)
+  #   }
+  # }
+  
+  #################################################
+  # sampling random id numbers for the population #
+  #################################################
 
   # initial setting
   no <- seq(1,15000)
-  giri <- 20                              #Samping length
+  giri <- 20                                     #Samping length
+  cuchul <- round(rnorm(giri, mean=100, sd=30))   #Random sampling through normal dist
   sample_no <- matrix(0,1500,giri)
-
-
 
   for (t in 1:giri){
     if (t==1) {
-      sample_no[1:100,t] <- sample(no,100, replace=F)
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
 
-      for (j in 1:100){
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
     }
 
     else {
-      temp <- sample_no[1401:1500,t-1]
-      sample_no[101:1500,t] <- sample_no[1:1400,t-1]
-      sample_no[1:100,t] <- sample(no,100, replace=F)
+      temp <- sample_no[(cuchul[t]+1):1500,t-1]
+      sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
+      sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
 
-      for (j in 1:100){
+      for (j in 1:cuchul[t]){
         no <- no[no[]!=sample_no[j,t]]
       }
 
@@ -126,42 +162,7 @@ for (i in 1:simul){
       no <- sort(no)
     }
   }
-  
-  # #################################################
-  # # sampling random id numbers for the population #
-  # #################################################
-  # 
-  # # initial setting
-  # no <- seq(1,15000)
-  # giri <- 20                                     #Samping length
-  # cuchul <- round(rnorm(giri, mean=100, sd=30))   #Random sampling through normal dist
-  # sample_no <- matrix(0,1500,giri)
-  # 
-  # for (t in 1:giri){
-  #   if (t==1) {
-  #     sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-  #     
-  #     for (j in 1:cuchul[t]){
-  #       no <- no[no[]!=sample_no[j,t]]
-  #     }
-  #   }
-  #   
-  #   else {
-  #     temp <- sample_no[(cuchul[t]+1):1500,t-1]
-  #     sample_no[(cuchul[t]+1):1500,t] <- sample_no[1:(1500-cuchul[t]),t-1]
-  #     sample_no[1:cuchul[t],t] <- sample(no,cuchul[t], replace=F)
-  #     
-  #     for (j in 1:cuchul[t]){
-  #       no <- no[no[]!=sample_no[j,t]]
-  #     }
-  #     
-  #     # adding fallout from the sample
-  #     no <- c(no, temp)
-  #     no <- no[no[]!=0]  # deleating 0 value
-  #     no <- sort(no)
-  #   }
-  # }
-  # 
+
   
   #######################################################
   # Getting the beset value for a and k for minimum mse #
@@ -524,6 +525,8 @@ boot_result[1] <- mean(sqrt(boo_var1)) / sd(boo_mean1)
 boot_result[2] <- mean(sqrt(boo_var2)) / sd(boo_mean2)
 boot_result[3] <- mean(sqrt(boo_var3)) / sd(boo_mean3)
 boot_result[4] <- mean(sqrt(boo_var4)) / sd(boo_mean4)
+
+mean(sqrt(global_var)) / sd(global_mean)
 
 popul[20]/100 / mean(global_mean)
 popul[20]/100 - mean(boo_mean4)
