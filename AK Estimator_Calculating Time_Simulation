@@ -1,0 +1,40 @@
+# S I M U L A T I O N   S U M M A R Y ( L O C A L ) # 
+
+simulation = 100  bootstrap = 100  Time = 5.548333 min 
+avg. time per AK calculation =  2.9128 seconds
+
+# Variance Performance
+simple / ak2 =  53.74434 
+simple / ak3 =  56.28234 
+simple / ak4 =  66.37746 
+simple / ak5 =  56.47173 
+
+
+# Mean Performance 
+Population / SRS =  0.6032172 
+Population / ak2 =  0.8899758 
+Population / ak3 =  0.9817449 
+Population / ak4 =  0.9648438 
+Population / ak5 =  0.9822011 
+
+
+
+# S I M U L A T I O N   S U M M A R Y ( G L O B A L ) # 
+
+simulation = 100  bootstrap = 100  Time = 5.510667 min 
+avg. time per AK calculation =  2.8941 seconds
+
+# Variance Performance
+simple / global =  53.02615 
+
+
+# Mean Performance 
+Population / SRS =  0.7038582 
+Population / Global =  1.013585 
+
+#Bootstrap Test
+Bootstrap test =  0.7565795
+
+
+simulation당 비교
+1.006461421512733
