@@ -271,17 +271,16 @@ result_show <- function(simul, boot_simul, time_elap, SRS_var, SRS_mean, global_
   cat("\n\n")
   
   cat("# Variance Performance\n")
-  print(mean(sqrt(SRS_var)) / mean(sqrt(global_var)))
-  cat("\n")
+  cat("simple / global", mean(sqrt(SRS_var)) / mean(sqrt(global_var)), "\n")
+  cat("\n\n")
   
   cat("# Mean Performance \n")
-  print(popul[t]/100 / mean(SRS_mean))       # Population / SRS
-  print(popul[t]/100 / mean(global_mean))    # Population / Global Mean
-  print(popul[t]/100 - mean(global_mean))    # Population - Global Mean
+  cat("Population / SRS", popul[t]/100 / mean(SRS_mean), "\n")
+  cat("Population / Global", popul[t]/100 / mean(global_mean), "\n")
   cat("\n")
   
   cat("#Bootstrap Test\n")
-  print(mean(sqrt(global_var)) / sd(global_mean))
+  cat("Bootstrap test", mean(sqrt(global_var)) / sd(global_mean), "\n")
 }
 result_show(simul, boot_simul, time_elap, SRS_var, SRS_mean, global_var, global_mean, time_calc)
 
