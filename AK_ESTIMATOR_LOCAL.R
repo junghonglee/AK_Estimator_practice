@@ -24,8 +24,8 @@ popul <- NULL                      # True value
 ##############################
 # Number of simulation times #
 
-simul <- 10
-boot_simul <- 1000
+simul <- 100
+boot_simul <- 100
 
 #######################################################################
 
@@ -192,17 +192,17 @@ for (i in 1:simul){
       # Optimizing A and K value #
       all_variance_local[a,k] <- var(local_booth[,t-3])
       all_mean_local[a,k] <- mean(local_booth[,t-3])
-
-      #CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
-      MSE_local[a,k] <- ((unemployment[[t-3]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
+      
+      CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
+      #MSE_local[a,k] <- ((unemployment[[t-3]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
       #VAR_local[a,k] <- (all_variance_local[a,k])
-        
+      
       
     }
   }
   
-  #ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
-  ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
+  ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
+  #ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
   #ak_max_local <- which(VAR_local == min(VAR_local), arr.ind = TRUE)
   
   # AK estimator value for the optimized A and K value #
@@ -229,16 +229,16 @@ for (i in 1:simul){
       all_variance_local[a,k] <- var(local_booth[,t-2])
       all_mean_local[a,k] <- mean(local_booth[,t-2])
       
-      #CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
-      MSE_local[a,k] <- ((unemployment[[t-2]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
+      CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
+      #MSE_local[a,k] <- ((unemployment[[t-2]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
       #VAR_local[a,k] <- (all_variance_local[a,k])
       
       
     }
   }
   
-  #ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
-  ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
+  ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
+  #ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
   #ak_max_local <- which(VAR_local == min(VAR_local), arr.ind = TRUE)
   
   # AK estimator value for the optimized A and K value #
@@ -249,7 +249,7 @@ for (i in 1:simul){
   ###########
   # 3 Step  #
   ###########
-
+  
   for (a in 1:10){
     for (k in 1:10){
       for (boo in 1:boot_simul) {
@@ -267,16 +267,16 @@ for (i in 1:simul){
       all_variance_local[a,k] <- var(local_booth[,t-1])
       all_mean_local[a,k] <- mean(local_booth[,t-1])
       
-      #CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
-      MSE_local[a,k] <- ((unemployment[[t-1]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
+      CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
+      #MSE_local[a,k] <- ((unemployment[[t-1]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
       #VAR_local[a,k] <- (all_variance_local[a,k])
       
       
     }
   }
   
-  #ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
-  ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
+  ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
+  #ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
   #ak_max_local <- which(VAR_local == min(VAR_local), arr.ind = TRUE)
   
   # AK estimator value for the optimized A and K value #
@@ -287,7 +287,7 @@ for (i in 1:simul){
   ###########
   # 4 Step  #
   ###########
-
+  
   for (a in 1:10){
     for (k in 1:10){
       for (boo in 1:boot_simul) {
@@ -305,16 +305,16 @@ for (i in 1:simul){
       all_variance_local[a,k] <- var(local_booth[,t])
       all_mean_local[a,k] <- mean(local_booth[,t])
       
-      #CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
-      MSE_local[a,k] <- ((unemployment[[t]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
+      CV_local[a,k] <- sqrt(all_variance_local[a,k])/all_mean_local[a,k]
+      #MSE_local[a,k] <- ((unemployment[[t]]/100) - all_mean_local[a,k])^2 + all_variance_local[a,k]
       #VAR_local[a,k] <- (all_variance_local[a,k])
       
       
     }
   }
   
-  #ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
-  ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
+  ak_max_local <- which(CV_local == min(CV_local), arr.ind = TRUE)
+  #ak_max_local <- which(MSE_local == min(MSE_local), arr.ind = TRUE)
   #ak_max_local <- which(VAR_local == min(VAR_local), arr.ind = TRUE)
   
   # AK estimator value for the optimized A and K value #
@@ -330,7 +330,7 @@ for (i in 1:simul){
   local_mean[i,t-1] <- ak_mean_local[t-1]
   local_mean[i,t-2] <- ak_mean_local[t-2]
   local_mean[i,t-3] <- ak_mean_local[t-3]
-
+  
   #* end timing *#
   time_temp <- proc.time()-e_time2
   time_calc[i] <- time_temp[[3]]
@@ -348,7 +348,8 @@ for (i in 1:simul){
   # Checking Progress #
   #####################
   
-  cat( "overall =", i/simul*100 ,"%\n")
+  cat( "[overall =", i/simul*100 ,"%] \t")
+  cat( "[elapsed time =", (proc.time()-e_time)[[3]]/60, "minutes] \n")
 }
 
 time_elap <- proc.time()-e_time
@@ -358,11 +359,12 @@ time_elap <- proc.time()-e_time
 # R E S U L T #
 # # # # # # # #
 
-result_show <- function(simul, boot_simul, time_elap, SRS_var, SRS_mean, local_var, local_mean){
+result_show <- function(simul, boot_simul, time_elap, SRS_var, SRS_mean, local_var, local_mean, time_calc){
   
   cat("\n")
   cat("# S I M U L A T I O N   S U M M A R Y ( L O C A L ) # \n\n")
-  cat("simulation =", simul," ");cat("bootstrap =", boot_simul," "); cat("Time =", time_elap[[3]]/60,"min")
+  cat("simulation =", simul," ");cat("bootstrap =", boot_simul," "); cat("Time =", time_elap[[3]]/60,"min", "\n")
+  cat("avg. time per AK calculation = ",mean(time_calc), "seconds")
   cat("\n\n")
   
   cat("# Variance Performance\n")
@@ -373,7 +375,7 @@ result_show <- function(simul, boot_simul, time_elap, SRS_var, SRS_mean, local_v
   cat("\n\n")
   
   cat("# Mean Performance \n")
-  cat("Population / SRS", popul[t]/100 / mean(SRS_mean))
+  cat("Population / SRS", popul[t]/100 / mean(SRS_mean), "\n")
   cat("Population / ak2", popul[t]/100 / mean(local_mean[,t-3]), "\n")
   cat("Population / ak3", popul[t]/100 / mean(local_mean[,t-2]), "\n")
   cat("Population / ak4", popul[t]/100 / mean(local_mean[,t-1]), "\n")
@@ -381,9 +383,9 @@ result_show <- function(simul, boot_simul, time_elap, SRS_var, SRS_mean, local_v
   cat("\n\n")
   
   cat("#Bootstrap Test\n")
-  cat("Population / ak2", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t-3]), "\n")
-  cat("Population / ak3", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t-2]), "\n")
-  cat("Population / ak4", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t-1]), "\n")
-  cat("Population / ak5", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t]), "\n")
+  cat("Bootstrap test ak2", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t-3]), "\n")
+  cat("Bootstrap test ak3", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t-2]), "\n")
+  cat("Bootstrap test ak4", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t-1]), "\n")
+  cat("Bootstrap test ak5", mean(sqrt(local_var[,t-3])) / sd(local_mean[,t]), "\n")
 }
-result_show(simul, boot_simul, time_elap, SRS_var, SRS_mean, local_var, local_mean)
+result_show(simul, boot_simul, time_elap, SRS_var, SRS_mean, local_var, local_mean, time_calc)

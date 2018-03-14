@@ -15,6 +15,7 @@ Mode <- function(x) {
 # Importing Base Data
 setwd("C:\\Users\\JHL\\Desktop\\thesis")  # Varies from cmputer!!!
 unemployment <- read.csv("unemployment.csv", header=T)
+data_length <- length(col(unemployment))
 
 # initial setting
 population <- matrix(NA,15000,192) # Sampled from true value
@@ -23,8 +24,8 @@ popul <- NULL                      # True value
 ##############################
 # Number of simulation times #
 
-simul <- 10
-boot_simul <- 10
+simul <- 100
+boot_simul <- 100
 
 #######################################################################
 
@@ -80,7 +81,7 @@ SRS_mean <- NULL
 e_time <- proc.time()
 
 for (i in 1:simul){
-
+  
   ##########################################
   # sampling id numbers for the population #
   ##########################################
@@ -116,7 +117,7 @@ for (i in 1:simul){
       no <- sort(no)
     }
   }
-
+  
   #################################################
   # sampling random id numbers for the population #
   #################################################
@@ -153,7 +154,7 @@ for (i in 1:simul){
       no <- sort(no)
     }
   }
-
+  
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   # Getting the beset value for a and k by minimizing criterior #
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -250,7 +251,8 @@ for (i in 1:simul){
   # Checking Progress #
   #####################
   
-  cat( "overall =", i/simul*100 ,"%\n")
+  cat( "[overall =", i/simul*100 ,"%] \t")
+  cat( "[elapsed time =", (proc.time()-e_time)[[3]]/60, "minutes] \n")
 }
 
 time_elap <- proc.time()-e_time
@@ -260,15 +262,27 @@ time_elap <- proc.time()-e_time
 # R E S U L T #
 # # # # # # # #
 
-cat("simulation =", simul," ");cat("bootstrap =", boot_simul," "); cat("Time =", time_elap[[3]]/60,"min")
+result_show <- function(simul, boot_simul, time_elap, SRS_var, SRS_mean, global_var, global_mean, time_calc){
+  
+  cat("\n")
+  cat("# S I M U L A T I O N   S U M M A R Y ( G L O B A L ) # \n\n")
+  cat("simulation =", simul," ");cat("bootstrap =", boot_simul," "); cat("Time =", time_elap[[3]]/60,"min \n")
+  cat("avg. time per AK calculation = ",mean(time_calc), "seconds")
+  cat("\n\n")
+  
+  cat("# Variance Performance\n")
+  print(mean(sqrt(SRS_var)) / mean(sqrt(global_var)))
+  cat("\n")
+  
+  cat("# Mean Performance \n")
+  print(popul[t]/100 / mean(SRS_mean))       # Population / SRS
+  print(popul[t]/100 / mean(global_mean))    # Population / Global Mean
+  print(popul[t]/100 - mean(global_mean))    # Population - Global Mean
+  cat("\n")
+  
+  cat("#Bootstrap Test\n")
+  print(mean(sqrt(global_var)) / sd(global_mean))
+}
+result_show(simul, boot_simul, time_elap, SRS_var, SRS_mean, global_var, global_mean, time_calc)
 
-# Variance Performance
-mean(sqrt(SRS_var)) / mean(sqrt(global_var))
 
-# Mean Performance
-popul[t]/100 / mean(SRS_mean)       # Population / SRS
-popul[t]/100 / mean(global_mean)    # Population / Global Mean
-popul[t]/100 - mean(global_mean)    # Population - Global Mean
-
-#Bootstrap Test
-mean(sqrt(global_var)) / sd(global_mean)
